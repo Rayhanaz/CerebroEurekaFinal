@@ -2,7 +2,6 @@ import streamlit as st
 import os
 import pandas as pd
 from PIL import Image
-# Impor fungsi classify dari classification.py
 from classification import classify, load_model
 
 # Misalkan kita menyimpan riwayat dalam file CSV
@@ -21,6 +20,12 @@ def save_history(new_data):
     history_df = pd.concat([history_df, new_data], ignore_index=True)
     history_df.to_csv(history_file, index=False)
 
+def delete_selected_rows(indices_to_delete):
+    history_df = load_history()
+    history_df = history_df.drop(index=indices_to_delete)
+    history_df.to_csv(history_file, index=False)
+    return history_df
+
 def app():
     st.title('Demo Images :computer:')
 
@@ -29,25 +34,28 @@ def app():
     st.markdown("<hr style='border:2px solid black'>", unsafe_allow_html=True)
     uploaded_file = st.file_uploader("Choose a file...")
     if uploaded_file is not None:
-        # Menampilkan gambar yang diunggah
         image = Image.open(uploaded_file).convert('RGB')
         st.image(image, caption='Uploaded MRI Image', use_column_width=True)
 
-        save_path = os.path.join('uploads', uploaded_file.name)
+        # Pastikan direktori 'uploads' ada
+        upload_dir = 'uploads'
+        if not os.path.exists(upload_dir):
+            os.makedirs(upload_dir)
+
+        save_path = os.path.join(upload_dir, uploaded_file.name)
         with open(save_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
 
         # Muat model untuk klasifikasi
         model = load_model('./model/Xception.h5')
         with open('./model/labels.txt', 'r') as f:
-            class_names = [a[:-1].split(' ')[1] for a in f.readlines()]
-            f.close()
+            class_names = [line.strip().split(' ')[1] for line in f.readlines()]
 
         class_name, conf_score = classify(image, model, class_names)
 
         st.write("---")
-        st.write("## Class: {}".format(class_name))
-        st.write("### Confident Score: {:.2f}%".format(conf_score * 100))  # Format untuk dua desimal
+        st.write(f"## Class: {class_name}")
+        st.write(f"### Confidence Score: {conf_score * 100:.2f}%")  # Format untuk dua desimal
         st.write("---")
 
         save_history({
@@ -60,27 +68,22 @@ def app():
         st.success('File uploaded and classified successfully!')
 
     # Menampilkan riwayat pengunggahan
-    st.markdown("<hr style='border:2px solid black'>", unsafe_allow_html=True)
     st.subheader('History Images')
     history_df = load_history()
-
-    # Tambahkan checkbox di setiap baris untuk memilih baris yang akan dihapus
-    if not history_df.empty:
-        selected_indices = st.multiselect("Select rows to delete", history_df.index)
-
-        # Tombol untuk menghapus baris yang dipilih
-        if st.button('Delete Selected Rows'):
-            history_df = history_df.drop(selected_indices)
-            history_df.to_csv(history_file, index=False)
-            st.success('Selected rows deleted!')
-
     st.write(history_df)
 
-    # Pindahkan tombol 'Clear History' ke bawah tabel
+    # Memilih baris untuk dihapus
+    if not history_df.empty:
+        selected_indices = st.multiselect('Choose rows to delete:', history_df.index)
+        if st.button('Delete Selected Rows'):
+            history_df = delete_selected_rows(selected_indices)
+            st.experimental_rerun()  # Rerun the app to refresh the state
+
+    # Tombol 'Clear History' diletakkan di sini, di bawah tabel riwayat pengunggahan
     if st.button('Clear History'):
         if os.path.exists(history_file):
             os.remove(history_file)
-            st.success('History cleared!')
+            st.experimental_rerun()  # Rerun the app to refresh the state
         else:
             st.error('No history file found.')
 
