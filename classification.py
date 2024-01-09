@@ -5,8 +5,6 @@ from PIL import Image
 import numpy as np
 import logging #untuk memonitoring dan debugging website saat pengembangan atau produksi.
 
-from set import classify, set_background
-
 # Mengaktifkan logging untuk memudahkan debugging dan melacak aktivitas.
 logging.basicConfig(level=logging.INFO)
 
