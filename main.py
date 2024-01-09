@@ -39,7 +39,7 @@ class MultiApp:
             # Membuat menu navigasi di sidebar dengan berbagai opsi
             app = option_menu(
                 menu_title='Menu',
-                options=['Home', 'Dataset', 'Information', 'Test', 'About Us'],
+                options=['Home', 'Dataset', 'Information', 'Demo', 'About Us'],
                 icons=['house-fill','clipboard-data-fill', 'info-circle-fill', 'tags-fill', 'file-person-fill'],
                 menu_icon='cast',
                 default_index=0,
@@ -59,7 +59,7 @@ class MultiApp:
             dataset.app()
         elif app == "Information":
             information.app()
-        elif app == "Test":
+        elif app == "Demo":
             demo.app()
         elif app == "About Us":
             about.app()

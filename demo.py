@@ -22,7 +22,7 @@ def save_history(new_data):
     history_df.to_csv(history_file, index=False)
 
 def app():
-    st.title('Testing Images :computer:')
+    st.title('Demo Images :computer:')
 
     # Bagian untuk mengunggah gambar
     st.subheader('Upload a Brain MRI Image to here')
