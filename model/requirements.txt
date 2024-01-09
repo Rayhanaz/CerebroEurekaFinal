@@ -1,0 +1,9 @@
+streamlit
+scikit-learn
+tensorflow
+keras
+Pillow
+st-pages
+numpy
+streamlit_option_menu
+pandas
