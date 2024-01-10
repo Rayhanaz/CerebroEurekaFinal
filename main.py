@@ -3,40 +3,37 @@ from streamlit_option_menu import option_menu
 import home, about, information, demo, dataset
 from set import set_background
 
-# Mengatur konfigurasi halaman dasar website Streamlit
+# Konfigurasi dasar untuk halaman Streamlit
 st.set_page_config(page_title="CerebroEureka", page_icon=":brain:")
-
-
 
 class MultiApp:
     def __init__(self):
-        # Inisialisasi daftar untuk menyimpan apps yang berbeda
+        # Membuat daftar untuk menyimpan berbagai aplikasi
         self.apps = []
 
     def add_app(self, title, func):
-        """ Add a new application. """
+        # Menambahkan aplikasi baru ke dalam daftar
         self.apps.append({
             "title": title,
             "function": func
         })
 
     def run(self):
-        """ Run the app. """
+        # Fungsi untuk menjalankan aplikasi berdasarkan pilihan di sidebar
         with st.sidebar:
-            # Mengatur latar belakang dan logo di sidebar\
+            # Mengatur latar belakang dan logo di sidebar
             set_background('./pictures/background.png')
             st.image('./pictures/cerebroeureka.png', width=150)
-            #st.sidebar.markdown("<h1 style='text-align: center; display: block;'>Eureka</h1>", unsafe_allow_html=True)
             # Mengatur gaya untuk logo di sidebar
             st.markdown("""
                 <style>
                 .sidebar .sidebar-content img {
-                    border-radius: 50%;  # Make logo edges round
+                    border-radius: 50%;  # Membuat tepi gambar menjadi bulat
                 }
                 </style>
                 """, unsafe_allow_html=True)
             
-            # Membuat menu navigasi di sidebar dengan berbagai opsi
+            # Membuat menu navigasi dengan berbagai opsi
             app = option_menu(
                 menu_title='Menu',
                 options=['Home', 'Dataset', 'Information', 'Demo', 'About Us'],
@@ -52,7 +49,7 @@ class MultiApp:
                 }
             )
 
-        # Routing ke halaman berdasarkan pilihan pengguna
+        # Routing ke halaman yang dipilih pengguna dari sidebar
         if app == "Home":
             home.app()
         elif app == "Dataset":
@@ -72,7 +69,7 @@ class MultiApp:
         </div>
     """, unsafe_allow_html=True)
 
-# Menjalankan website jika skrip dijalankan sebagai program utama
+# Menjalankan aplikasi jika skrip ini
 if __name__ == "__main__":
     app = MultiApp()
     app.run()
